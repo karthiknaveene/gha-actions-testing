@@ -47,23 +47,22 @@ jobs:
             echo ${{ steps.go-action.outputs.cbp_artifact_id }} 
             echo "test=${{ steps.go-action.outputs.cbp_artifact_id }}" >> $GITHUB_OUTPUT
 
-  # test:
-  #   runs-on: ubuntu-latest
-  #   needs: [build]   # Depends on 'build' job
-  #   steps:
-  #     - name: Run tests
-  #       run: echo "Running Tests..."
+  test:
+    runs-on: ubuntu-latest
+    needs: [build]   # Depends on 'build' job
+    steps:
+      - name: Run tests
+        run: echo "Running Tests..."
 
-  #     - name: Checkout to Collect Test Results
-  #       uses: actions/checkout@v3
+      - name: Checkout to Collect Test Results
+        uses: actions/checkout@v3
 
-  #     - name: Publish Test Results in Cloudbees Plaform
-  #       uses: cloudbees-io-gha/publish-test-results@v2
-  #       with:
-  #         test-type: GO
-  #         results-path: test-results/results.json
-  #         cloudbees-url: "https://api.saas-qa.beescloud.com"
-  #         # cloudbees-pat: ${{ secrets.BT_USER_PAT_GHA }}
+      - name: Publish Test Results in Cloudbees Plaform
+        uses: cloudbees-io-gha/publish-test-results@v2
+        with:
+          test-type: GO
+          results-path: test-results/results.json
+
           
   #     - name: Publish evidence
   #       uses: cloudbees-io-gha/publish-evidence-item@v2
