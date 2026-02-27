@@ -64,39 +64,42 @@ jobs:
           results-path: test-results/results.json
 
           
-  #     - name: Publish evidence
-  #       uses: cloudbees-io-gha/publish-evidence-item@v2
-  #       with:
-  #         cloudbees-url: "https://api.saas-qa.beescloud.com"
-  #         # cloudbees-pat: ${{ secrets.BT_USER_PAT_GHA }}
-  #         content: |-
-  #           Testing Completed and results published to Cloudbees platform
-  #           Test | Results |
-  #           --------|---------|
-  #           Test 1 | PASS |
-  #           Test 2 | FAIL |
-  #           Test 3 | PASS |
+      - name: Publish evidence
+        uses: cloudbees-io-gha/publish-evidence-item@v2
+        with:
+          content: |-
+            Testing Completed and results published to Cloudbees platform
+            Test | Results |
+            --------|---------|
+            Test 1 | PASS |
+            Test 2 | FAIL |
+            Test 3 | PASS |
 
 
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs: [build,test]   # Depends on both 'build' and 'test' jobs
-  #   steps:
-  #     - name: Checkout to Prepare Manifest
-  #       uses: actions/checkout@v3
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build,test]   # Depends on both 'build' and 'test' jobs
+    steps:
+      - name: Checkout to Prepare Manifest
+        uses: actions/checkout@v3
         
-  #     - name: Trigger Deployment
-  #       uses: cloudbees-io-gha/run-cloudbees-workflow@v1
-  #       id: deploy
-  #       with :
-  #         cloudbees-url: "https://api.saas-qa.beescloud.com"
-  #         cloudbees-pat: ${{ secrets.BT_USER_PAT_GHA }}
-  #         branch-name: "main"
-  #         workflow-file-name: "cbp-deploy.yaml"
-  #         workflow-inputs: '{"artifactName": "SampleApp-Backend-15","artifactVersion": "${{ env.artifact_version }}", "environment": "QA", "artifactId" : "${{needs.build.outputs.artifactId}}"}'
+      - name: Trigger Deployment
+        uses: cloudbees-io-gha/run-cloudbees-workflow@v1
+        id: deploy
+        with :
+          cloudbees-pat: ${{ secrets.USER_PAT_GHA }}
+          branch-name: "main"
+          workflow-file-name: "cbp-deploy.yaml"
+          workflow-inputs: '{"artifactName": "SampleApp-Backend-15","artifactVersion": "${{ env.artifact_version }}", "environment": "QA", "artifactId" : "${{needs.build.outputs.artifactId}}"}'
 
-  #     - name: Use runUrl output
-  #       run: echo "The CloudBees run URL is ${{ steps.deploy.outputs.cbp_run_url }}"
+      - name: Use runUrl output
+        run: echo "The CloudBees run URL is ${{ steps.deploy.outputs.cbp_run_url }}"
+
+      - name: Publish evidence
+        uses: cloudbees-io-gha/publish-evidence-item@v2
+        with:
+          content: |-
+            The CloudBees run URL is ${{ steps.deploy.outputs.cbp_run_url }}
         
         
         
